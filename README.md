@@ -93,6 +93,13 @@ It is also possible to use pip to install only the Python version using a precom
 pip install SiPM
 ```
 
+### Python Support for Windows
+In windows operation system, only python and C++ dynamic link library are tested. You need to install Visual Studio build tools or Visual Studio Community, install python and install pybind11 form pypi:
+```sh
+pip install pybind11
+```
+Then just run the cmake to build C++ library and set SIPM_BUILD_PYTHON flag to generate pyd file.
+
 ## <a name="C++_basic_usage"></a>C++ basic use
 SimSiPM focuses on simplicity! It does not make use of pointers, or custom classes as parameters of the simulation or input. In most cases a std::vector is all that you need in order to get started.
 ### SiPMProperties
@@ -347,6 +354,11 @@ In this case 95% of the photons are distributed following a gaussian distributio
 ```cpp
 myPropertie.setHitDistribution(sipm::SiPMProperties::HitDistribution::kGaussian);
 ```
+
+## Known issues
+1. Python function SiPM.SiPMSensor().hitsGraph() is not implemented and cannot found in C++ source code.
+2. The sin and cos function used for Macos and linux operation system are optimizated by SIMD Instructions, windows version using standard math libraries.
+3. Only MSVC compiler is tested.  
 
 ## <a name="contrib"></a>Contributing
 Feel free to contact me if you have any problem while including SimSiPM in your project, if you find a bug or have any suggestion or improvement. I would be pleased to discuss it with you.
