@@ -8,7 +8,12 @@
 
 // Random seed
 #include <vector>
+#ifdef WIN32
+#include <corecrt_math_defines.h> //enable M_PI and others for windows
+#include <intrin.h>
+#else
 #include <x86intrin.h>
+#endif
 static uint64_t rdtsc() {
   _mm_lfence();
   const uint64_t t = __rdtsc();
@@ -191,22 +196,22 @@ double SiPMRandom::randGaussian(const double mu, const double sigma) noexcept {
     }
 
     while (true) {
-      double x = Rand();
-      double y = kYm * Rand();
-      const double z = kX0 - kS * x - y;
+      double _x = Rand();
+      double _y = kYm * Rand();
+      const double z = kX0 - kS * _x - _y;
       double rn;
       if (z > 0) {
-        rn = 2 + y / x;
+        rn = 2 + _y / _x;
       } else {
-        x = 1 - x;
-        y = kYm - y;
-        rn = -(2 + y / x);
+        _x = 1 - _x;
+        _y = kYm - _y;
+        rn = -(2 + _y / _x);
       }
-      if ((y - kAs + x) * (kCs + x) + kBs < 0) {
+      if ((_y - kAs + _x) * (kCs + _x) + kBs < 0) {
         return rn * sigma + mu;
       }
-      if (y < x + kT) {
-        if (rn * rn < 4 * (kB - log(x))) {
+      if (_y < _x + kT) {
+        if (rn * rn < 4 * (kB - log(_x))) {
           return rn * sigma + mu;
         }
       }
@@ -220,31 +225,31 @@ double SiPMRandom::randGaussian(const double mu, const double sigma) noexcept {
  * casting double to float.
  */
 float SiPMRandom::randGaussianF(const float mu, const float sigma) noexcept {
-  static constexpr float kC1 = 1.448242853;
-  static constexpr float kC2 = 3.307147487;
-  static constexpr float kC3 = 1.46754004;
-  static constexpr float kD1 = 1.036467755;
-  static constexpr float kD2 = 5.295844968;
-  static constexpr float kD3 = 3.631288474;
-  static constexpr float kHm = 0.483941449;
-  static constexpr float kZm = 0.107981933;
-  static constexpr float kHp = 4.132731354;
-  static constexpr float kZp = 18.52161694;
-  static constexpr float kPhln = 0.4515827053;
-  static constexpr float kHm1 = 0.516058551;
-  static constexpr float kHp1 = 3.132731354;
-  static constexpr float kHzm = 0.375959516;
-  static constexpr float kHzmp = 0.591923442;
+  static constexpr float kC1 = 1.448242853f;
+  static constexpr float kC2 = 3.307147487f;
+  static constexpr float kC3 = 1.46754004f;
+  static constexpr float kD1 = 1.036467755f;
+  static constexpr float kD2 = 5.295844968f;
+  static constexpr float kD3 = 3.631288474f;
+  static constexpr float kHm = 0.483941449f;
+  static constexpr float kZm = 0.107981933f;
+  static constexpr float kHp = 4.132731354f;
+  static constexpr float kZp = 18.52161694f;
+  static constexpr float kPhln = 0.4515827053f;
+  static constexpr float kHm1 = 0.516058551f;
+  static constexpr float kHp1 = 3.132731354f;
+  static constexpr float kHzm = 0.375959516f;
+  static constexpr float kHzmp = 0.591923442f;
   /*zhm 0.967882898*/
 
-  static constexpr float kAs = 0.8853395638;
-  static constexpr float kBs = 0.2452635696;
-  static constexpr float kCs = 0.2770276848;
-  static constexpr float kB = 0.5029324303;
-  static constexpr float kX0 = 0.4571828819;
-  static constexpr float kYm = 0.187308492;
-  static constexpr float kS = 0.7270572718;
-  static constexpr float kT = 0.03895759111;
+  static constexpr float kAs = 0.8853395638f;
+  static constexpr float kBs = 0.2452635696f;
+  static constexpr float kCs = 0.2770276848f;
+  static constexpr float kB = 0.5029324303f;
+  static constexpr float kX0 = 0.4571828819f;
+  static constexpr float kYm = 0.187308492f;
+  static constexpr float kS = 0.7270572718f;
+  static constexpr float kT = 0.03895759111f;
 
   do {
     const float y = Rand<float>();
@@ -279,22 +284,22 @@ float SiPMRandom::randGaussianF(const float mu, const float sigma) noexcept {
     }
 
     while (true) {
-      float x = Rand<float>();
-      float y = kYm * Rand<float>();
-      const float z = kX0 - kS * x - y;
+      float _x = Rand<float>();
+      float _y = kYm * Rand<float>();
+      const float z = kX0 - kS * _x - _y;
       float rn;
       if (z > 0) {
-        rn = 2 + y / x;
+        rn = 2 + _y / _x;
       } else {
-        x = 1 - x;
-        y = kYm - y;
-        rn = -(2 + y / x);
+        _x = 1 - _x;
+        _y = kYm - _y;
+        rn = -(2 + _y / _x);
       }
-      if ((y - kAs + x) * (kCs + x) + kBs < 0) {
+      if ((_y - kAs + _x) * (kCs + _x) + kBs < 0) {
         return rn * sigma + mu;
       }
-      if (y < x + kT) {
-        if (rn * rn < 4 * (kB - logf(x))) {
+      if (_y < _x + kT) {
+        if (rn * rn < 4 * (kB - logf(_x))) {
           return rn * sigma + mu;
         }
       }
@@ -370,6 +375,13 @@ std::vector<double> SiPMRandom::randGaussian(const double mu, const double sigma
     double* ptr = out.data() + i;
     __sincos(TWO_PI * u[i + 1], ptr, ptr + 1);
   }
+#elif WIN32
+  for (uint32_t i = 0; i < n - 1; i += 2) {
+    double* ptr = out.data() + i;
+    // fast_math::sincos(TWO_PI * u[i + 1], ptr, ptr + 1);
+    *ptr = sin(TWO_PI * u[i + 1]);
+    *(ptr + 1) = cos(TWO_PI * u[i + 1]);
+  }
 #else
   for (uint32_t i = 0; i < n - 1; i += 2) {
     double* ptr = out.data() + i;
@@ -393,7 +405,7 @@ std::vector<double> SiPMRandom::randGaussian(const double mu, const double sigma
 std::vector<float> SiPMRandom::randGaussianF(const float mu, const float sigma, const uint32_t n) {
   std::vector<float> out(n);
   const std::vector<float> u = RandF(n);
-  constexpr float TWO_PI = 2 * M_PI;
+  constexpr float TWO_PI = (float)(2.0 * M_PI);
   float* r = (float*)sipmAlloc(sizeof(float) * n);
 
   for (uint32_t i = 0; i < n - 1; i += 2) {
@@ -405,6 +417,13 @@ std::vector<float> SiPMRandom::randGaussianF(const float mu, const float sigma, 
   for (uint32_t i = 0; i < n - 1; i += 2) {
     float* ptr = out.data() + i;
     __sincosf(TWO_PI * u[i + 1], ptr, ptr + 1);
+  }
+#elif WIN32
+  for (uint32_t i = 0; i < n - 1; i += 2) {
+    float* ptr = out.data() + i;
+    // fast_math::sincosf(TWO_PI * u[i + 1], ptr, ptr + 1);
+    *ptr = sinf(TWO_PI * u[i + 1]);
+    *(ptr + 1) = cosf(TWO_PI * u[i + 1]);
   }
 #else
   for (uint32_t i = 0; i < n - 1; i += 2) {

@@ -1,15 +1,15 @@
 #include "SiPMProperties.h"
 #include <algorithm>
-#include <iomanip>
 #include <fstream>
+#include <iomanip>
 
 namespace sipm {
 
 SiPMProperties::SiPMProperties() {
-  m_SideCells = 1000 * m_Size / m_Pitch;
+  m_SideCells = (uint32_t)round(1000.0 * m_Size / m_Pitch);
   m_Ncells = m_SideCells * m_SideCells;
-  m_SignalPoints = m_SignalLength / m_Sampling;
-  m_SnrLinear = pow(10, -m_SnrdB / 20);
+  m_SignalPoints = (uint32_t)round(m_SignalLength / m_Sampling);
+  m_SnrLinear = pow(10.0, -m_SnrdB / 20.0);
 }
 
 void SiPMProperties::setProperty(const std::string& prop, const double val) {
@@ -42,7 +42,7 @@ void SiPMProperties::setProperty(const std::string& prop, const double val) {
   } else if (aProp == "tauapslow") {
     setTauApSlowComponent(val);
   } else if (aProp == "ccgv") {
-    setCcgv(val);
+    setCcgv(float(val));
   } else if (aProp == "snr") {
     setSnr(val);
   } else if (aProp == "pde") {

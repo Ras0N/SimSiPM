@@ -48,10 +48,10 @@ public:
   static SiPMProperties readSettings(const std::string&);
 
   /// @brief Returns size of sensor in mm
-  constexpr uint32_t size() const { return m_Size; }
+  constexpr uint32_t size() const { return (uint32_t)(m_Size); }
 
   /// @brief Returns pitch of cell in um
-  constexpr uint32_t pitch() const { return m_Pitch; }
+  constexpr uint32_t pitch() const { return (uint32_t)(m_Pitch); }
 
   /// @brief Returns total number of cells in the sensor
   constexpr uint32_t nCells() const { return m_Ncells; }
@@ -156,7 +156,7 @@ public:
   ///@param x Size of sipm sensor in mm
   constexpr void setSize(const double x) {
     m_Size = x;
-    m_SideCells = 1000 * m_Size / m_Pitch;
+    m_SideCells = (uint32_t)(1000.0 * m_Size / m_Pitch);
     m_Ncells = m_SideCells * m_SideCells;
   }
 
@@ -164,21 +164,21 @@ public:
   /// @param x Size of sipm cell in um
   constexpr void setPitch(const double x) {
     m_Pitch = x;
-    m_SideCells = 1000 * m_Size / m_Pitch;
+    m_SideCells = (uint32_t)(1000.0 * m_Size / m_Pitch);
     m_Ncells = m_SideCells * m_SideCells;
   }
 
   /// @brief Set sampling time of the signal in ns
   void setSampling(const double x) {
     m_Sampling = x;
-    m_SignalPoints = m_SignalLength / m_Sampling;
+    m_SignalPoints = (uint32_t)(m_SignalLength / m_Sampling);
   }
 
   /// @brief Set length of the signa in ns
   /// @param x Signal length in ns
   constexpr void setSignalLength(const double x) {
     m_SignalLength = x;
-    m_SignalPoints = m_SignalLength / m_Sampling;
+    m_SignalPoints = (uint32_t)(m_SignalLength / m_Sampling);
   }
 
   /// @brief Set rising time constant of signal @sa SiPMSensor::signalShape
@@ -208,12 +208,20 @@ public:
   /// @param x Recovery time constant of each SiPM cell in ns
   constexpr void setRecoveryTime(const double x) { m_RecoveryTime = x; }
 
-  /// @brief Set SNR value in dB
-  /// @param x Signal to noise ratio in dB
+/// @brief Set SNR value in dB
+/// @param x Signal to noise ratio in dB
+#ifdef WIN32
+  void setSnr(const double x) {
+    m_SnrdB = x;
+    m_SnrLinear = pow(10, -m_SnrdB / 20);
+  }
+  // Note: function pow in msvc is not a constexpr function.
+#else
   constexpr void setSnr(const double x) {
     m_SnrdB = x;
     m_SnrLinear = pow(10, -m_SnrdB / 20);
   }
+#endif
 
   /// @brief Set time constant for the delay of fast afterpulses
   /// @param x Time constant of fast component of afterpulses
@@ -330,7 +338,7 @@ private:
   double m_TauApFastComponent = 10;
   double m_TauApSlowComponent = 80;
   double m_ApSlowFraction = 0.5;
-  float m_Ccgv = 0.05;
+  float m_Ccgv = 0.05f;
   double m_SnrdB = 30;
   float m_Gain = 1.0;
   double m_SnrLinear;

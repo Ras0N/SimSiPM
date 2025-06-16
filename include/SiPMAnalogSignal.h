@@ -39,14 +39,13 @@ public:
   inline float operator[](const uint32_t i) const noexcept { return m_Waveform[i]; }
 
   /// @brief Returns the number of points in the waveform
-  inline uint32_t size() const { return m_Waveform.size(); }
+  inline uint32_t size() const { return (uint32_t)m_Waveform.size(); }
   /// @brief Returns the sampling time of the signal in ns
   inline double sampling() const { return m_Sampling; }
   /// @brief Returns the signal length in ns
   inline double length() const { return (double)m_Waveform.size() / m_Sampling; }
   /// @brief Returns the waveform in an accessible data structure
-  inline const std::vector<float>& waveform() const noexcept {return m_Waveform; }
-
+  inline const std::vector<float>& waveform() const noexcept { return m_Waveform; }
 
   /// @brief Returns integral of the signal
   double integral(const double, const double, const double) const;
